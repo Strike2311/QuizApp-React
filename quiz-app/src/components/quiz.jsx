@@ -1,80 +1,67 @@
 import { useState } from 'react'
 import Results from './results'
 import { useEffect } from 'react'
-
+import axios from 'axios';
 function Quiz() {
-    const questionBank = [
-        {
-            question : "What is the capital city of Poland?",
-            options : [
-                "Warsaw", 
-                "Berlin", 
-                "Bialystok", 
-                "Chicago"
-            ],
-            answer : "Warsaw"
-        },
-        {
-            question : "Which languages are used for web apps?",
-            options : [
-                "JavaScript", 
-                "PHP", 
-                "Python", 
-                "All"
-            ],
-            answer : "All"
-        },
-        {
-            question : "Whot does JSX stand for?",
-            options : [
-                "JavaScript XML", 
-                "Java Syntax eXtension", 
-                "Just a Simple eXample", 
-                "None of the above"
-            ],
-            answer : "JavaScript XML"
-        },
-        {
-            question : "Which game is the best of the following?",
-            options : [
-                "Metin 2", 
-                "Elden Ring", 
-                "Pizza Tower", 
-                "Balatro"
-            ],
-            answer : "Metin 2"
-        },
-    ]
+    const QUESTION_TIME_IN_SEC = 10
     let initialAnswers = [null, null, null, null]
+    const initialQuestionBank = {
+        question: "",
+        options: [""],
+        answer: ""
+    }
     const [currentQuestion, setCurrentQuestion] = useState(0)
+    const [questionBank, setQuestionBank] = useState([initialQuestionBank])
     const [userAnswers, setUserAnswers] = useState(initialAnswers)
     const selectedAnswer = userAnswers[currentQuestion]
-    const [timeLeft, setTimeLeft] = useState(15)
+    const [timeLeft, setTimeLeft] = useState(QUESTION_TIME_IN_SEC)
+    console.log(questionBank.length)
+
     useEffect(() => {
-        // Start a countdown
+        axios.get('http://localhost:5000/api/question_bank')
+            .then(response => {
+                setQuestionBank(response.data);
+            })
+            .catch(error => {
+            console.error('Error fetching data:', error);
+      });
+    }, []);
+
+     useEffect(() => {
+        if (currentQuestion >= questionBank.length) return;
+
+        setTimeLeft(QUESTION_TIME_IN_SEC); 
+
         const timer = setInterval(() => {
-            setTimeLeft(prev => {
-            if (prev === 1) {
-                clearInterval(timer);
-                changeCurrentQuestion(1);  // Move to next question
-                return 15; // Reset timer
+        setTimeLeft(prev => {
+            if (prev <= 1) {
+            clearInterval(timer);
+            setCurrentQuestion(prevQ => prevQ + 1);
+            return QUESTION_TIME_IN_SEC;
             }
             return prev - 1;
-            });
-        }, 1000);
+        });
+    }, 1000);
 
-        // Clear interval when question changes
         return () => clearInterval(timer);
     }, [currentQuestion]);
 
     function restartQuiz() {
-        setTimeLeft(15)
+        axios.get('http://localhost:5000/api/question_bank')
+            .then(response => {
+                setQuestionBank(response.data);
+            })
+            .catch(error => {
+            console.error('Error fetching data:', error);
+        });
+        setTimeLeft(QUESTION_TIME_IN_SEC)
         setCurrentQuestion(0)
         let emptyUserAnswers = []
         for (let i = 0; i < userAnswers.length; i++) {
             emptyUserAnswers[i] = null;
         }
         setUserAnswers(emptyUserAnswers)
+
     }
 
     function handleSelectOption (option) {
@@ -84,7 +71,7 @@ function Quiz() {
     }
     function changeCurrentQuestion(modifier) {
         setCurrentQuestion(currentQuestion + modifier)
-        setTimeLeft(15)
+        setTimeLeft(QUESTION_TIME_IN_SEC)
     }
     if (currentQuestion === questionBank.length) {
         return <Results questionBank={questionBank} userAnswers={userAnswers} restartQuiz={restartQuiz}/>
