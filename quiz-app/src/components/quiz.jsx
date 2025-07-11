@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Results from './results'
 import { useEffect } from 'react'
 import axios from 'axios';
-function Quiz() {
+function Quiz({ setIsQuizStarted }) {
     const QUESTION_TIME_IN_SEC = 10
     let initialAnswers = [null, null, null, null]
     const initialQuestionBank = {
@@ -18,7 +18,7 @@ function Quiz() {
     console.log(questionBank.length)
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/question_bank')
+        axios.get('http://localhost:5000/api/question_bank_shuffled')
             .then(response => {
                 setQuestionBank(response.data);
             })
@@ -47,7 +47,7 @@ function Quiz() {
     }, [currentQuestion]);
 
     function restartQuiz() {
-        axios.get('http://localhost:5000/api/question_bank')
+        axios.get('http://localhost:5000/api/question_bank_shuffled')
             .then(response => {
                 setQuestionBank(response.data);
             })
@@ -64,6 +64,10 @@ function Quiz() {
 
     }
 
+    function backToMainMenu() {
+        setIsQuizStarted(false)
+    }
+
     function handleSelectOption (option) {
         let newUserAnswers = [...userAnswers]
         newUserAnswers[currentQuestion] = option
@@ -74,7 +78,7 @@ function Quiz() {
         setTimeLeft(QUESTION_TIME_IN_SEC)
     }
     if (currentQuestion === questionBank.length) {
-        return <Results questionBank={questionBank} userAnswers={userAnswers} restartQuiz={restartQuiz}/>
+        return <Results questionBank={questionBank} userAnswers={userAnswers} restartQuiz={restartQuiz} backToMainMenu={backToMainMenu}/>
 
     } else {
         return (

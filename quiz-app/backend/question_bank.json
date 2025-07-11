@@ -1,22 +1,42 @@
 [
   {
     "question": "What is the capital city of Poland?",
-    "options": ["Warsaw", "Berlin", "Bialystok", "Chicago"],
+    "options": [
+      "Warsaw",
+      "Berlin",
+      "Bialystok",
+      "Chicago"
+    ],
     "answer": "Warsaw"
   },
   {
     "question": "Which languages are used for web apps?",
-    "options": ["JavaScript", "PHP", "Python", "All"],
+    "options": [
+      "JavaScript",
+      "PHP",
+      "Python",
+      "All"
+    ],
     "answer": "All"
   },
   {
     "question": "Whot does JSX stand for?",
-    "options": ["JavaScript XML", "Java Syntax eXtension", "Just a Simple eXample", "None of the above"],
+    "options": [
+      "JavaScript XML",
+      "Java Syntax eXtension",
+      "Just a Simple eXample",
+      "None of the above"
+    ],
     "answer": "JavaScript XML"
   },
   {
     "question": "Which game is the best of the following?",
-    "options": ["Metin 2", "Elden Ring", "Pizza Tower", "Balatro"],
+    "options": [
+      "Metin 2",
+      "Elden Ring",
+      "Pizza Tower",
+      "Balatro"
+    ],
     "answer": "Metin 2"
   }
 ]
